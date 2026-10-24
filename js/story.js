@@ -28,7 +28,7 @@ const Story = (() => {
     },
     alex: {
       name: 'Alex', role: 'CEO',
-      sprite: { skin: '#e2a982', hair: '#1c1714', hairStyle: 'spiky', beard: 'short', beardColor: '#5a4a42', smile: true, shirt: '#a3a7ad', top: 'blazer', inner: '#a9c7f0', pants: '#2c3442' },
+      sprite: { skin: '#e2a982', hair: '#1c1714', hairStyle: 'spiky', smile: true, shirt: '#a3a7ad', top: 'blazer', inner: '#a9c7f0', pants: '#2c3442' },
     },
     diego: {
       name: 'Diego', role: 'CTO · profe · runner',
