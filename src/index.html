@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Odoo Loop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=VT323&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div id="viewport">
+    <div id="stage" class="crt">
+      <div id="world"></div>
+
+      <div class="hud">
+        <div class="hud-left">
+          <div id="clock" class="clock">16:42</div>
+          <div id="loop-badge" class="loop-badge">LOOP #1 · Viernes 23/10</div>
+        </div>
+        <div id="banner" class="banner"></div>
+      </div>
+
+      <button id="prompt" class="prompt hidden" type="button"></button>
+
+      <div id="dialog" class="dialog hidden">
+        <div id="dialog-portrait" class="dialog-portrait"></div>
+        <div class="dialog-body">
+          <div class="dialog-head"><span id="dialog-name"></span><span id="dialog-role"></span></div>
+          <div id="dialog-text" class="dialog-text"></div>
+          <div id="dialog-choices" class="dialog-choices"></div>
+          <div id="dialog-next" class="dialog-next" hidden>▼</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <span>←/→ caminar</span><span>E interactuar</span><span>T esperar 1'</span>
+        <span>N cuaderno</span><span>P píxeles</span><span>M silencio</span>
+      </div>
+
+      <div class="touch-pad">
+        <button type="button" data-touch="left">◀</button>
+        <button type="button" data-touch="right">▶</button>
+        <button type="button" data-touch="act">E</button>
+        <button type="button" data-touch="wait">T</button>
+        <button type="button" data-touch="notebook">N</button>
+      </div>
+
+      <div id="toast-root" class="toast-root"></div>
+      <div id="modal-root"></div>
+      <div class="scanlines"></div>
+    </div>
+  </div>
+
+  <script src="js/sprites.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/story.js"></script>
+</body>
+</html>
