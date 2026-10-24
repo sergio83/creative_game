@@ -1296,6 +1296,7 @@ const Story = (() => {
       final.classList.add('is-on');
       setTimeout(() => {
         document.querySelector('#stage').classList.add('is-frozen');
+        E.stopMusic(); // the music cuts out with the final glitch gag
         E.sfx('fail');
         final.querySelector('[data-final-line]').style.animation = 'glitch .6s steps(1) 3';
       }, 2200);

@@ -364,6 +364,7 @@ const Engine = (() => {
         <button class="btn" type="button" data-act="notebook">📓 Cuaderno</button>
       </div>`;
     $('#modal-root').appendChild(el);
+    if (e.kind === 'good') setTimeout(startMusic, 900); // let the win jingle finish first
     el.querySelector('[data-act="go"]').addEventListener('click', () => {
       el.remove();
       if (e.onContinue) e.onContinue();
@@ -377,6 +378,7 @@ const Engine = (() => {
   }
 
   function rewind() {
+    stopMusic();
     $('#modal-root').innerHTML = '';
     const ov = document.createElement('div');
     ov.className = 'rewind';
@@ -572,6 +574,13 @@ const Engine = (() => {
 
   function toggleSound() {
     soundOn = !soundOn;
+    if (!soundOn) {
+      const wasPlaying = !!music;
+      stopMusic();
+      musicMuted = wasPlaying;
+    } else if (musicMuted) {
+      startMusic();
+    }
     toast(soundOn ? '🔊 Sonido activado' : '🔇 Silencio');
   }
 
@@ -678,6 +687,94 @@ const Engine = (() => {
     }
   }
 
+  /* Title-screen chiptune loop: 132 BPM, sixteenth-note steps, 8 bars of C–G–Am–F, scheduled ahead of time. */
+  const BPM = 132;
+  const STEP = 60 / BPM / 4;
+  const CHORDS = [[60, 64, 67, 72], [55, 59, 62, 67], [57, 60, 64, 69], [53, 57, 60, 65]];
+  const PROGRESSION = [0, 1, 2, 3, 0, 1, 3, 1];
+  const LEAD = [ // one eighth note per entry, 8 per bar, 0 = rest
+    79, 79, 76, 79, 84, 0, 79, 76,
+    74, 74, 71, 74, 79, 0, 77, 74,
+    76, 76, 72, 76, 81, 0, 79, 76,
+    77, 76, 74, 72, 74, 0, 0, 0,
+    79, 79, 76, 79, 84, 0, 86, 84,
+    83, 0, 79, 0, 74, 76, 77, 79,
+    81, 0, 77, 81, 84, 83, 81, 79,
+    77, 0, 74, 0, 71, 74, 79, 0,
+  ];
+  const midi = n => 440 * 2 ** ((n - 69) / 12);
+  let music = null;
+  let musicMuted = false; // music was requested while muted; resume it when sound comes back
+  let noiseBuf = null;
+
+  function noise(dur, delay, vol, highpass) {
+    if (!noiseBuf) {
+      noiseBuf = ctx.createBuffer(1, ctx.sampleRate * 0.5, ctx.sampleRate);
+      const data = noiseBuf.getChannelData(0);
+      for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+    }
+    const t = ctx.currentTime + delay;
+    const src = ctx.createBufferSource();
+    const filter = ctx.createBiquadFilter();
+    const gain = ctx.createGain();
+    src.buffer = noiseBuf;
+    filter.type = 'highpass';
+    filter.frequency.value = highpass;
+    gain.gain.setValueAtTime(vol, t);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    src.connect(filter).connect(gain).connect(ctx.destination);
+    src.start(t);
+    src.stop(t + dur + 0.02);
+  }
+
+  function playStep(i, d) {
+    const bar = Math.floor(i / 16) % PROGRESSION.length;
+    const pos = i % 16;
+    const chord = CHORDS[PROGRESSION[bar]];
+    if (pos % 2 === 0) {
+      const lead = LEAD[bar * 8 + pos / 2];
+      if (lead) tone(midi(lead), STEP * 1.8, 'square', d, 0.07);
+      tone(midi(chord[0] - 12 + (pos % 4 === 2 ? 12 : 0)), STEP * 1.7, 'triangle', d, 0.16);
+    }
+    tone(midi(chord[pos % 4] + 12), STEP * 0.7, 'square', d, 0.018);
+    if (pos === 0 || pos === 8 || pos === 10) {
+      const kick = tone(150, 0.14, 'sine', d, 0.35);
+      kick.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + d + 0.12);
+    }
+    if (pos === 4 || pos === 12) noise(0.12, d, 0.18, 1200);
+    if (pos % 4 === 2) noise(0.03, d, 0.06, 7000);
+  }
+
+  function startMusic() {
+    musicMuted = !soundOn;
+    if (!soundOn) return;
+    try {
+      ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
+    } catch {
+      return;
+    }
+    // Must run inside a user gesture: a context created before one stays suspended until resumed.
+    if (ctx.state === 'suspended') ctx.resume();
+    if (music) return;
+    music = { step: 0, next: ctx.currentTime + 0.05 };
+    music.timer = setInterval(() => {
+      if (!music) return;
+      if (music.next < ctx.currentTime) music.next = ctx.currentTime + 0.05; // resync after tab throttling
+      while (music.next < ctx.currentTime + 0.2) {
+        playStep(music.step, music.next - ctx.currentTime);
+        music.step++;
+        music.next += STEP;
+      }
+    }, 50);
+  }
+
+  function stopMusic() {
+    musicMuted = false;
+    if (!music) return;
+    clearInterval(music.timer);
+    music = null;
+  }
+
   // -------------------------------------------------------------------- boot
 
   function titleScreen() {
@@ -702,7 +799,15 @@ const Engine = (() => {
     }
     $('#stage').appendChild(el);
     decorate(el);
+    // Browsers block audio until a user gesture, so the music starts on the first interaction.
+    const kick = () => startMusic();
+    window.addEventListener('pointerdown', kick, { once: true });
+    window.addEventListener('keydown', kick, { once: true });
+    startMusic();
     const go = () => {
+      window.removeEventListener('pointerdown', kick);
+      window.removeEventListener('keydown', kick);
+      stopMusic();
       el.remove();
       started = true;
       sfx('learn');
@@ -747,7 +852,7 @@ const Engine = (() => {
 
   return {
     boot, interact, say, choose, spend, learn, knows, egg, flag, setFlag, count, time, over, interrupted,
-    ending, epilogue, rewind, modal, toast, sfx, face, sprite, decorate, format, escapeHtml, fmt, notebook,
+    ending, epilogue, rewind, modal, toast, sfx, startMusic, stopMusic, face, sprite, decorate, format, escapeHtml, fmt, notebook,
     get memory() { return memory; },
     player,
     resetMemory,
