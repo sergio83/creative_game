@@ -431,7 +431,9 @@ const Story = (() => {
   }
 
   async function alexPriority() {
-    await say('alex', '¿Me estás pidiendo que cancele la reunión de emergencia?');
+    await say('alex', flag('meetingDone')
+      ? '¿Me estás pidiendo que congele todo? ¿Después de la reunión tan productiva que tuvimos?'
+      : '¿Me estás pidiendo que cancele la reunión de emergencia?');
     await say('you', 'Sí. Y que nadie deploye nada más hasta que esto esté resuelto. Ni la feature nueva del login.');
     await say('alex', '…');
     await say('alex', 'Está bien. Es la decisión más estratégica que tomé hoy. Prioridad uno: Odoo. Todo lo demás, congelado.');
@@ -509,7 +511,7 @@ const Story = (() => {
     await say('diego', 'Ahí está. Odoo se actualizó solo hoy a las 3 de la mañana y ahora exige un header nuevo en todas las llamadas: `X-Odoo-Company-Id`. Básicamente, Odoo nos pregunta «¿y vos de qué empresa sos?».');
     await say('diego', 'Nuestra API, la integración que armó Sergio, no lo manda. Odoo rechaza cada request. No es un endpoint: es todo.');
     await say('diego', 'Eso no es un síntoma: es la causa. Se agrega el header en la API, en un solo lugar, y se prueba el flujo completo: backoffice y Timesheet.');
-    await say('diego', 'Lo hacemos en un branch, corremos el flujo completo en staging y recién ahí producción. Nada de try/catch mágicos.');
+    await say('diego', 'Lo hacemos en un branch, corremos el flujo completo en QA y recién ahí producción. Nada de try/catch mágicos.');
     await say('you', '*(Por fin alguien dijo «causa raíz» y no «Sergio».)*');
     E.setFlag('diego');
     E.learn('rootCause');
@@ -544,7 +546,7 @@ const Story = (() => {
     } else if (E.time() >= T(55)) {
       await say('diego', 'Recién termino la clase. Tengo veinte minutos antes de salir a correr. ¿Qué pasa?');
     } else {
-      await say('diego', 'Tengo unos minutos antes de dar clase y cuarenta antes de salir a correr. ¿Qué pasa?');
+      await say('diego', 'Tengo unos minutos antes de dar clase y media hora antes de salir a correr. ¿Qué pasa?');
     }
     await talk('Diego', () => [
       {
@@ -1210,6 +1212,7 @@ const Story = (() => {
           await E.spend(1);
           return;
         }
+        E.setFlag('meetingDone');
         if (pick?.id === 'dodge') {
           await say('alex', 'Dale, después te paso el resumen.');
           await say('you', '*(Nunca hubo resumen.)*');
@@ -1296,7 +1299,7 @@ const Story = (() => {
     if (!(await E.spend(3))) return;
     await say('diego', inClass()
       ? '*(desde el Zoom, sin cortar la clase)* Chicos, esto es un deploy controlado en vivo. Tomen nota.'
-      : 'Flujo completo en staging: verde. Ahora sí, producción.');
+      : 'Flujo completo en QA: verde. Ahora sí, producción.');
     await say('system', 'API → Odoo: `200 OK` (de verdad, esta vez).');
     await say('fede', 'Timesheet… backoffice… API… Odoo. Los patos están en orden. Por primera vez, ninguno se cae al piso.');
     E.setFlag('won');
@@ -1310,9 +1313,11 @@ const Story = (() => {
     E.sfx('ping');
     await say('sergio', 'Che, recién veo los mensajes. ¿Pasó algo con Odoo?');
     await say('you', '*(sonriendo)* Todo bien, Sergio. Disfrutá las vacaciones.');
+    E.sfx('ping');
+    await say('sergio', '¿Y Flor preguntó si había más entradas del Chanta?');
     await say('narrator', 'Pasan dos segundos.');
     E.sfx('ping');
-    await say('sergio', 'Genial. Una consulta rápida: ¿me pueden explicar cómo quedó la integración?');
+    await say('sergio', 'Otra consulta rápida: ¿me pueden explicar cómo quedó la integración?');
     await say('narrator', 'Cerrás Discord.');
     E.ending({
       code: 'BUS_FACTOR > 1', title: 'ACHIEVEMENT UNLOCKED', kind: 'good',
