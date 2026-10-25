@@ -593,6 +593,7 @@ canvas { image-rendering: pixelated; }
 .char.is-gone { opacity: 0; pointer-events: none; }
 .char.facing-left .sprite { transform: scaleX(-1); }
 .char.is-walking .sprite { animation: walk .3s steps(1) infinite; }
+.char.is-caffeinated.is-walking .sprite { animation-duration: .12s; }
 .char.is-talking .sprite { animation: talk .22s steps(1) infinite; }
 .char.is-near .sprite { filter: drop-shadow(0 0 0 #fff) drop-shadow(2px 0 0 rgba(255,210,63,.9)) drop-shadow(-2px 0 0 rgba(255,210,63,.9)); }
 

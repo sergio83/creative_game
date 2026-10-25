@@ -142,7 +142,6 @@ const Story = (() => {
       </div>
 
       <!-- Sala Ctrl+Z -->
-      <div class="sign boxed" style="left:1590px;top:110px">SALA<br>Ctrl+Z<small>(volver atrás)</small></div>
       <div class="logo-wall" style="left:1760px;top:80px">
         <canvas data-logo="34x31" style="width:170px;height:155px"></canvas>
         <img src="assets/cc-wordmark.svg" alt="Creative Coefficient">
@@ -228,7 +227,7 @@ const Story = (() => {
       { id: 'frame', x: X.frame, label: 'Mirar el cuadro' },
       { id: 'my-desk', x: X.myDesk, label: 'Usar tu compu' },
       { id: 'alex', x: flag('alex') ? 1860 : X.alex, label: 'Hablar con Alex' },
-      { id: 'coffee', x: X.coffee, label: 'Usar la cafetera' },
+      { id: 'coffee', x: X.coffee, label: 'Tomar un café' },
       { id: 'whiteboard', x: X.whiteboard, label: 'Leer la pizarra' },
       { id: 'diego', x: X.diego, label: inClass() ? 'Mirar a Diego (está en clase)' : 'Hablar con Diego' },
       { id: 'medals', x: X.medals, label: 'Mirar el medallero de Diego' },
@@ -251,7 +250,7 @@ const Story = (() => {
     const flor = $('#flor-screen');
     if (flor) {
       flor.className = 'monitor ' + (flag('won') ? 'is-ok' : 'is-error');
-      flor.innerHTML = flag('won') ? 'RECIBOS<br>✔ 45/45' : 'RECIBOS<br>✖ error al subir';
+      flor.innerHTML = flag('won') ? 'RECIBOS<br>✔ 50/50' : 'RECIBOS<br>✖ error al subir';
     }
     const diego = $('#diego-screen');
     if (diego) {
@@ -369,7 +368,7 @@ const Story = (() => {
 
   async function flor() {
     if (flag('won')) {
-      await say('flor', '45 de 45. Y Sergio figura de vacaciones. Todo en orden. Me voy a tomar un café como si nada.');
+      await say('flor', '50 de 50. Y Sergio figura de vacaciones. Todo en orden. Me voy a tomar un café como si nada.');
       return;
     }
     const openers = ['Pero si ayer funcionaba.', '¿Le podés preguntar a Sergio?', 'No sé qué tocó la actualización. Yo solamente necesito mandar los recibos.'];
@@ -401,7 +400,7 @@ const Story = (() => {
       {
         label: '¿No se pueden mandar los recibos a mano?',
         run: async () => {
-          await say('flor', 'Son 45 recibos. Con Ctrl+C, Ctrl+V llego para el aguinaldo.');
+          await say('flor', 'Son 50 recibos. Con Ctrl+C, Ctrl+V llego para el aguinaldo.');
           await say('flor', '¿Por fax? ¿Tenemos fax? Sergio seguro sabe si tenemos fax.');
         },
       },
@@ -943,13 +942,13 @@ const Story = (() => {
     if (!(await E.spend(3))) return;
     await say('narrator', 'Te ponés los auriculares. Levantás la API en tu máquina, con tu `.env` de QA.');
     await say('narrator', 'Agregás el header a mano: `X-Odoo-Company-Id: 1`. Todo verde. Commit: «fix». Push. Deploy a producción.');
-    await say('system', 'Producción: `200 OK — 45 recibos subidos a la compañía 1`');
-    await say('flor', 'Dice que se subieron los 45… pero no le llegó ninguno a nadie.');
+    await say('system', 'Producción: `200 OK — 50 recibos subidos a la compañía 1`');
+    await say('flor', 'Dice que se subieron los 50… pero no le llegó ninguno a nadie.');
     await say('alex', '¿Por qué no funcionó el fix?');
     await say('diego', 'Porque no se probó el flujo completo. ¿Qué company id pusiste?');
     await say('you', 'El 1. El de mi `.env`.');
-    await say('diego', 'La 1 es QA. Producción es la 2. Acabás de mandarle los 45 recibos de sueldo a «Usuario Prueba QA».');
-    await say('narrator', 'En QA, «Usuario Prueba QA» tiene 45 recibos esperando su firma. El lunes alguien de QA va a tener una sorpresa.');
+    await say('diego', 'La 1 es QA. Producción es la 2. Acabás de mandarle los 50 recibos de sueldo a «Usuario Prueba QA».');
+    await say('narrator', 'En QA, «Usuario Prueba QA» tiene 50 recibos esperando su firma. El lunes alguien de QA va a tener una sorpresa.');
     await say('narrator', 'Mirás la pantalla.');
     await say('you', 'Pero en mi máquina funcionaba.');
     E.ending({
@@ -1052,9 +1051,18 @@ const Story = (() => {
       await say('narrator', 'Un cuadro: «EMPLEADO DEL MES». Es Sergio. Todos los meses desde 2019. Alguien le pegó un post-it: «bus factor = 1».');
     },
     coffee: async () => {
-      await say('system', 'La cafetera muestra: `Error al conectar con Sergio`.');
-      await say('you', '¿También la integró él?');
-      E.egg('coffee', 'la cafetera integrada');
+      const n = E.count('coffee');
+      if (n > 1) {
+        await say('system', 'La cafetera muestra: `Sin café. Avisar a Flor para reponer.`');
+        await say('you', '*(Flor tiene que mandar 50 recibos antes de las 17:00. No le voy a sumar un ticket de café.)*');
+        return;
+      }
+      await say('system', 'La cafetera muestra: `Compilando café… 100%. 0 errores, 0 warnings.`');
+      await say('narrator', 'Es lo único en esta oficina que compila a la primera.');
+      await say('you', '*(Café doble listo.)*');
+      E.caffeinate(20, 1.8);
+      E.toast('☕ Cafeína: caminás más rápido por un rato');
+      E.egg('coffee', 'el café que compila a la primera');
     },
     whiteboard: async () => {
       await say('narrator', 'La pizarra dice: «RECIBOS → BACKOFFICE → API → ODOO». Abajo, con otra letra: «y todo → Sergio».');
@@ -1176,8 +1184,8 @@ const Story = (() => {
         await say('system', 'Los errores desaparecen. Todos. Porque ahora se capturan y se ignoran.');
         await say('narrator', 'Cinco segundos después…');
         await say('alex', '¡Excelente! ¿Entonces ya está solucionado?');
-        await say('system', 'El backoffice muestra un hermoso mensaje verde: `200 OK — 45 recibos enviados`');
-        await say('flor', 'Dice que se enviaron los 45 recibos. No le llegó ninguno a nadie. Me están llamando cuarenta y cinco personas.');
+        await say('system', 'El backoffice muestra un hermoso mensaje verde: `200 OK — 50 recibos enviados`');
+        await say('flor', 'Dice que se enviaron los 50 recibos. No le llegó ninguno a nadie. Me están llamando cincuenta personas.');
         E.ending({
           code: 'REGRESSION_DETECTED', title: 'Final: El workaround definitivo', kind: 'bad', lesson: 'trycatch',
           text: ['El sistema dejó de mostrar errores porque ahora los captura y los ignora.', 'Nunca un 200 OK fue tan mentiroso.'],
@@ -1217,7 +1225,7 @@ const Story = (() => {
     await say('fede', 'Timesheet… backoffice… API… Odoo. Los patos están en orden. Por primera vez, ninguno se cae al piso.');
     E.setFlag('won');
     await say('system', 'Timesheet → API → Odoo: sincronizando la cola revisada… Vacaciones de Sergio: `SINCRONIZADAS ✅`');
-    await say('flor', '¡Se subieron los recibos! 45 de 45, ya les llegaron a todos para firmar. Y mirá: Sergio figura de vacaciones. ¡Estaba de vacaciones!');
+    await say('flor', '¡Se subieron los recibos! 50 de 50, ya les llegaron a todos para firmar. Y mirá: Sergio figura de vacaciones. ¡Estaba de vacaciones!');
     await say('alex', 'Entonces… ¿cuánto falta?');
     await say('you', 'Nada, Alex. Ya está.');
     await say('alex', 'Es la mejor respuesta que escuché en toda mi carrera. Documentemos el incidente.');

@@ -22,7 +22,7 @@ const Engine = (() => {
   let soundOn = true;
   let memory = loadMemory();
 
-  const player = { x: 0, facing: 1, target: null, walking: false };
+  const player = { x: 0, facing: 1, target: null, walking: false, boost: 0, boostMult: 1 };
   const keys = { left: false, right: false };
   let nearId = null;
 
@@ -59,6 +59,12 @@ const Engine = (() => {
     toast(`📓 ${story.knowledge[key]}`);
     sfx('learn');
     return true;
+  }
+
+  // Temporary walk-speed multiplier; only ticks down while the player is free to move.
+  function caffeinate(seconds, mult) {
+    player.boost = seconds;
+    player.boostMult = mult;
   }
 
   function egg(key, label) {
@@ -409,6 +415,7 @@ const Engine = (() => {
     player.x = story.playerStart;
     player.facing = -1;
     player.target = null;
+    player.boost = 0;
     $('#stage').classList.remove('is-frozen');
     render();
 
@@ -511,10 +518,15 @@ const Engine = (() => {
         }
       }
       if (dir) {
-        player.x = Math.max(40, Math.min(story.worldWidth - 40, player.x + dir * SPEED * dt));
+        const speed = SPEED * (player.boost > 0 ? player.boostMult : 1);
+        player.x = Math.max(40, Math.min(story.worldWidth - 40, player.x + dir * speed * dt));
         player.facing = dir;
       }
       player.walking = !!dir;
+      if (player.boost > 0) {
+        player.boost -= dt;
+        if (player.boost <= 0) toast('☕ Se te bajó el café.');
+      }
     } else {
       player.walking = false;
     }
@@ -523,6 +535,7 @@ const Engine = (() => {
     if (pEl) {
       pEl.style.left = `${player.x}px`;
       pEl.classList.toggle('is-walking', player.walking);
+      pEl.classList.toggle('is-caffeinated', player.boost > 0);
       pEl.classList.toggle('facing-left', player.facing < 0);
     }
     const cam = Math.max(0, Math.min(story.worldWidth - VIEW_W, player.x - VIEW_W / 2));
@@ -851,7 +864,7 @@ const Engine = (() => {
   }
 
   return {
-    boot, interact, say, choose, spend, learn, knows, egg, flag, setFlag, count, time, over, interrupted,
+    boot, interact, say, choose, spend, learn, knows, egg, caffeinate, flag, setFlag, count, time, over, interrupted,
     ending, epilogue, rewind, modal, toast, sfx, startMusic, stopMusic, face, sprite, decorate, format, escapeHtml, fmt, notebook,
     get memory() { return memory; },
     player,
