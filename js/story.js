@@ -342,7 +342,8 @@ const Story = (() => {
       await say('you', 'Hola Flor. Ehh… no lo vi. ¿Pasó algo?');
       await say('flor', 'Odoo se actualizó y el backoffice me da error. Tengo que mandar los recibos de sueldo antes de las 17:00.');
       await say('flor', '¿Le podés preguntar a Sergio? Esto Sergio lo arregla en cinco minutos.');
-      await say('narrator', 'Caminá con ←/→ e interactuá con E. Las acciones importantes consumen minutos (⏱). Caminar es gratis. A las 17:00 se termina el día.');
+      await say('flor', 'Ah, una cosita más: cuando lo veas, decile que me avise cuando publique más entradas del Chanta.');
+      await say('narrator', 'Caminá con ←/→ e interactuá con Espacio (o E). Las acciones importantes consumen minutos (⏱). Caminar es gratis. A las 17:00 se termina el día.');
       return;
     }
     await say('flor', 'Che, ¿Sergio está?');
