@@ -155,7 +155,7 @@ const Story = (() => {
 
       <!-- Rincón dev -->
       <div class="board navy small" style="left:2140px;top:96px;width:200px">
-        <b>PATRONES DE DISEÑO II</b>- Singleton (como yo<br>&nbsp;&nbsp;en el running)<br>- Factory<br>- ¿Por qué todo es<br>&nbsp;&nbsp;un «Manager»?<br><span class="orange">Strava: 3.240 km</span>
+        <b>INGENIERÍA DE SOFTWARE</b>- Singleton (como yo<br>&nbsp;&nbsp;en el running)<br>- Factory<br>- ¿Por qué todo es<br>&nbsp;&nbsp;un «Manager»?<br><span class="orange">Strava: 3.240 km</span>
       </div>
       <div class="desk" style="left:2180px">
         <div class="laptop" id="diego-screen" style="left:30px">{ arch }</div>
@@ -181,7 +181,6 @@ const Story = (() => {
         <b style="color:#1f3a8a">REGLAS DE COCINA</b>1. El viernes no<br>&nbsp;&nbsp;&nbsp;se deploya<br>2. No calentar<br>&nbsp;&nbsp;&nbsp;pescado<br>3. Lavá tu taza<br><span class="red">4. sudo no vale</span>
       </div>
       <div class="wall-text" style="left:2990px;top:84px">Hay 10 tipos de personas:<br>las que entienden binario<br>y las que no.</div>
-      <div class="sign pink" style="left:3000px;top:188px">17:00 ¡DESENCHUFATE!</div>
       <div class="coffee spot" data-spot="coffee" style="left:2760px"></div>
       <div class="desk" style="left:2870px">
         <div class="ducks" id="ducks" style="left:12px">
