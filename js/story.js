@@ -124,7 +124,7 @@ const Story = (() => {
       <!-- Open space -->
       <div class="poster" style="left:672px;top:84px;width:150px">NO TOCAR<br>PRODUCCIÓN<br>LOS VIERNES<small>(firmado: Sergio)</small></div>
       <div class="frame spot" data-spot="frame" style="left:910px;top:84px">
-        <div data-face="sergio"></div>EMPLEADO<br>DEL MES<br><small>(todos los meses)</small>
+        <div data-face="sergio"></div>EMPLEADO<br>DEL MES
       </div>
       <div class="chair" style="left:770px"></div>
       <div class="desk spot" data-spot="sergio-desk" style="left:700px">
@@ -1125,7 +1125,7 @@ const Story = (() => {
       if (loops() >= 3) await say('you', '*(Ya lo probé mentalmente. No.)*');
     },
     frame: async () => {
-      await say('narrator', 'Un cuadro: «EMPLEADO DEL MES». Es Sergio. Todos los meses desde 2019. Alguien le pegó un post-it: «bus factor = 1».');
+      await say('narrator', 'Un cuadro: «EMPLEADO DEL MES». Es Sergio. El clavo es nuevo y hay un martillo en su escritorio. Seguro que lo colgó él.');
     },
     coffee: async () => {
       const n = E.count('coffee');
