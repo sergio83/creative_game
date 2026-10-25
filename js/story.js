@@ -1351,8 +1351,10 @@ const Story = (() => {
       </div>
       <div class="credits-lane">
         ${runner('dog')}${runner('duck', 'duck-run')}
-        ${runner('diego', 'slow')}
+        <div class="cheers" data-cheers><div class="cheers-bubble">¡Salud!</div></div>
+        <div class="dancer" data-dancer></div>
         <div class="juggler" data-juggler></div>
+        <div class="rider"><div class="rider-body" data-rider></div></div>
       </div>
       <div class="credits-final">
         <div data-final-line>—Che, ¿alguien sabe por qué dejó de funcionar el login?</div>
@@ -1368,7 +1370,21 @@ const Story = (() => {
     dogEl.style.backgroundImage = `url(${Sprites.dogSheet().url})`;
     el.querySelector('[data-runner="dog"]').appendChild(dogEl);
     el.querySelector('[data-runner="duck"]').innerHTML = '<div class="duck" data-duck style="margin-left:90px"></div>';
-    el.querySelector('[data-runner="diego"]').appendChild(E.sprite('diego'));
+    const cheers = el.querySelector('[data-cheers]');
+    cheers.appendChild(E.sprite('alex'));
+    cheers.insertAdjacentHTML('beforeend', `<svg class="cheers-mug" viewBox="0 0 22 26" width="22" height="26" shape-rendering="crispEdges" aria-hidden="true">
+      <rect x="15" y="9" width="5" height="3" fill="#cfd8dc"/><rect x="18" y="9" width="3" height="12" fill="#cfd8dc"/><rect x="15" y="18" width="5" height="3" fill="#cfd8dc"/>
+      <rect x="2" y="6" width="14" height="19" fill="#cfd8dc"/><rect x="4" y="8" width="10" height="15" fill="#f5b819"/>
+      <rect x="1" y="2" width="16" height="6" fill="#fff"/><rect x="3" y="0" width="6" height="3" fill="#fff"/></svg>`);
+    el.querySelector('[data-dancer]').appendChild(E.sprite('flor'));
+    const rider = el.querySelector('[data-rider]');
+    rider.appendChild(E.sprite('diego'));
+    rider.insertAdjacentHTML('beforeend', `<svg class="bike" viewBox="0 0 96 52" width="96" height="52" aria-hidden="true">
+      <g fill="none" stroke="#e8e8e8" stroke-width="4"><circle cx="20" cy="32" r="17"/><circle cx="76" cy="32" r="17"/></g>
+      <g class="bike-spokes" stroke="#8a8494" stroke-width="2"><path d="M20 15v34M3 32h34"/></g>
+      <g class="bike-spokes is-front" stroke="#8a8494" stroke-width="2"><path d="M76 15v34M59 32h34"/></g>
+      <g fill="none" stroke="#ff3b3b" stroke-width="4" stroke-linejoin="round"><path d="M20 32L40 12L48 32Z"/><path d="M40 12H68L76 32"/><path d="M68 12V4H76"/></g>
+      <rect x="32" y="6" width="14" height="5" fill="#2a2230"/></svg>`);
     const juggler = el.querySelector('[data-juggler]');
     juggler.innerHTML = '<div class="duck" data-duck></div><div class="duck" data-duck="#5ab1e8"></div><div class="duck" data-duck="#5fd07a"></div>';
     juggler.appendChild(E.sprite('fede'));
@@ -1409,8 +1425,7 @@ const Story = (() => {
   };
 
   return {
-    cast, knowledge, endingsCatalog, events, handlers,
-    worldWidth: 3300,
+    cast, knowledge, endingsCatalog, events, handlers,    worldWidth: 3300,
     playerStart: 620,
     zoneAt,
     onStage: ['flor', 'alex', 'diego', 'fede'],
