@@ -483,6 +483,15 @@ const Story = (() => {
         run: alexPriority,
       },
       {
+        label: '¿Tenés algo para entretener al perro?', cost: 1, when: inClass() && !flag('ball'),
+        run: async () => {
+          await say('alex', 'Siempre llevo una pelotita. Es parte de mi onboarding kit para stakeholders de cuatro patas.');
+          await say('narrator', 'Alex te da una pelotita de tenis.');
+          E.setFlag('ball');
+          E.toast('🎾 Conseguiste una pelotita');
+        },
+      },
+      {
         label: 'Ese «LGTM» de #general lo mandó tu perro.', when: flag('lgtm'),
         run: async () => {
           await say('alex', 'Bueno, es un perro muy senior. Tiene más contexto que la mitad del equipo.');
@@ -511,6 +520,19 @@ const Story = (() => {
       await say('narrator', 'Diego está dando clase por Zoom: «…y por eso, chicos, nunca dependan de una sola persona».');
       await say('narrator', 'Te hace señas: vuelve a las 16:55.');
       E.learn('diegoClass');
+      if (!flag('spyClass')) {
+        await menu('¿Qué hacés?', () => [
+          {
+            label: 'Espiar la clase por encima del hombro', cost: 1, leave: true,
+            run: async () => {
+              await say('narrator', 'Diego comparte pantalla. Una diapositiva enorme dice: «QA ≠ PRODUCCIÓN».');
+              await say('diego', '…y si alguna vez deployan con el company id de QA, tranquilos: el usuario de prueba va a cobrar muy bien ese mes.');
+              await say('you', '*(Anotado: antes de deployar, chequear el company id.)*');
+              E.setFlag('spyClass');
+            },
+          },
+        ]);
+      }
       return;
     }
     if (flag('won')) {
@@ -639,6 +661,26 @@ const Story = (() => {
       },
       { label: 'Ese cubo… ¿cuánto tardás?', run: rubik },
       {
+        label: '¿Competimos a ver quién arma el cubo más rápido?', cost: 2, when: inClass() && !flag('rubikRace'),
+        run: async () => {
+          await say('fede', 'Dale. Tres, dos, uno…');
+          await say('narrator', 'Fede termina en nueve segundos. Vos, en dos minutos, completás una cara. Casi.');
+          await say('fede', 'Una cara de seis. No está mal: es más cobertura de tests que la de nuestra API.');
+          E.setFlag('rubikRace');
+        },
+      },
+      {
+        label: '¿Me prestás un pato para debuggear?', cost: 1, when: inClass() && !flag('rubberDuck'),
+        run: async () => {
+          await say('fede', 'Llevate el de la API. Es muy buen oyente.');
+          await say('narrator', 'Le explicás el bug al pato, paso por paso. El pato escucha sin interrumpir. Mejor que la mitad de las reuniones.');
+          await say('you', knows('rootCause')
+            ? '*(Header faltante, un solo lugar, flujo completo. Hasta el pato lo entendió.)*'
+            : '*(Dicho en voz alta… si ayer andaba y hoy no, ¿y si Odoo ahora pide algo que nosotros no le mandamos?)*');
+          E.setFlag('rubberDuck');
+        },
+      },
+      {
         label: '¿Cómo hacés malabares y explicás dependencias a la vez?',
         run: async () => {
           await say('fede', 'Es fácil. Cada pato tiene su propio estado.');
@@ -679,11 +721,45 @@ const Story = (() => {
       await say('narrator', 'El perro está sentado sobre tu teclado. Ya escribió `ññññññññ` en la terminal. Mejor no lo muevas: parece que está deployando.');
       return;
     }
+    if (inClass()) return dogBreak();
+    await dogIdle();
+  }
+
+  async function dogIdle() {
     if (E.time() >= T(52)) {
       await say('narrator', 'El perro persigue un pato de goma alrededor del escritorio de Fede. El pato, por primera vez, es más rápido que un deploy.');
       return;
     }
     await say('narrator', 'Le rascás la cabeza. El perro te mira con más empatía que cualquier sistema de tickets.');
+  }
+
+  // Extra things to do with the dog while Diego is in class.
+  async function dogBreak() {
+    await menu('¿Qué hacés con el perro?', () => [
+      {
+        label: 'Tirarle la pelotita', cost: 1, when: flag('ball') && !flag('ballThrown'),
+        run: async () => {
+          await say('narrator', 'Tirás la pelotita. El perro la mira, te mira, y vuelve trayendo el pato de Odoo.');
+          await say('fede', '¡Ese es Odoo! Devolvémelo, que sin él no anda nada.');
+          await say('you', '*(Hasta el perro sabe dónde está la dependencia crítica.)*');
+          E.setFlag('ballThrown');
+        },
+      },
+      {
+        label: 'Hacer la daily con el perro', cost: 1, when: !flag('dogDaily'),
+        run: async () => {
+          await say('you', '¿Qué hiciste ayer?');
+          await say('narrator', 'El perro mueve la cola.');
+          await say('you', '¿Qué vas a hacer hoy?');
+          await say('narrator', 'Mueve la cola.');
+          await say('you', '¿Algún bloqueo?');
+          await say('narrator', 'Se tira panza arriba.');
+          await say('you', '*(La daily más corta y más honesta del sprint.)*');
+          E.setFlag('dogDaily');
+        },
+      },
+      { label: 'Acariciarlo', leave: true, run: dogIdle },
+    ]);
   }
 
   // ------------------------------------------------------------ Sergio desk
