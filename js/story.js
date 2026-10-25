@@ -1054,13 +1054,12 @@ const Story = (() => {
 
   async function deploy() {
     if (!flag('fede')) {
-      if (knows('hotfix')) {
-        const pick = await choose('you', '*(La última vez que deployé sin chequear dependencias, toda la empresa quedó de vacaciones…)*', [
-          { label: 'Deployar igual. Esta vez va a andar.', id: 'go', tone: 'risky' },
-          { label: 'Mejor no. Primero hablo con Fede.', id: 'no' },
-        ]);
-        if (pick?.id !== 'go') return;
-      }
+      await say('diego', `${inClass() ? '*(por chat, desde el Zoom)* ' : ''}¿Chequeaste con Fede qué más depende de Odoo? Si la API vuelve a hablar, va a mandar toda la cola de Timesheet de golpe.`);
+      const pick = await choose('you', knows('hotfix') ? '*(La última vez que deployé sin chequear dependencias, toda la empresa quedó de vacaciones…)*' : '¿Qué hacés?', [
+        { label: knows('hotfix') ? 'Deployar igual. Esta vez va a andar.' : 'Deployar igual. ¿Qué podría salir mal?', id: 'go', tone: 'risky' },
+        { label: 'Mejor no. Primero hablo con Fede.', id: 'no' },
+      ]);
+      if (pick?.id !== 'go') return;
       return hotfixFriday();
     }
     if (!flag('alex')) {

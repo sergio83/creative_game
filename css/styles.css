@@ -972,6 +972,8 @@ canvas { image-rendering: pixelated; }
   .title-cast .sprite { animation: blink 3.4s steps(1) infinite; }
 }
 
+/* Modals opened from an ending card (e.g. the notebook) must stack above it. */
+.ending ~ .modal { z-index: 61; }
 .ending {
   position: absolute;
   inset: 0;

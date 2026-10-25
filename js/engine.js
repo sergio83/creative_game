@@ -367,7 +367,7 @@ const Engine = (() => {
       ${lesson}
       <div class="btn-row">
         <button class="btn" type="button" data-act="go">${e.kind === 'good' ? 'Ver créditos ▶' : '◀◀ Volver a las 16:42'}</button>
-        <button class="btn" type="button" data-act="notebook">📓 Cuaderno</button>
+        ${e.kind === 'good' ? '' : '<button class="btn" type="button" data-act="notebook">📓 Cuaderno</button>'}
       </div>`;
     $('#modal-root').appendChild(el);
     if (e.kind === 'good') setTimeout(startMusic, 900); // let the win jingle finish first
@@ -376,7 +376,7 @@ const Engine = (() => {
       if (e.onContinue) e.onContinue();
       else rewind();
     });
-    el.querySelector('[data-act="notebook"]').addEventListener('click', () => notebook());
+    el.querySelector('[data-act="notebook"]')?.addEventListener('click', () => notebook());
   }
 
   function fmt(t) {
